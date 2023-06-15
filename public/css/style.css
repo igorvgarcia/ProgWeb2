@@ -1,0 +1,29 @@
+.site-header {
+    background-color: #f2f2f2; /* Cor de fundo do header */
+    padding: 20px; /* Espaçamento interno do header */
+    text-align: center; /* Centralizar o conteúdo do header */
+}
+
+.header-container {
+    max-width: 960px; /* Largura máxima do conteúdo do header */
+    margin: 0 auto; /* Centralizar o conteúdo do header horizontalmente */
+}
+
+.site-header h1 {
+    margin: 0;
+}
+
+.site-header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.site-header nav ul li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.site-header nav ul li a {
+    text-decoration: none;
+}
