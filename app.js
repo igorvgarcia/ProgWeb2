@@ -39,6 +39,7 @@ const indexRouter = require('./routes/index');
 const contatoRouter = require('./routes/contato');
 const tecnologiasRouter = require('./routes/tecnologias');
 const sobreRouter = require('./routes/sobre');
+const desenvolvedorRouter = require('./routes/desenvolvedor');
 
 // Configuração dos middlewares
 app.use(express.json());
@@ -53,6 +54,7 @@ app.use('/contato', (req, res, next) => {
   next();
 }, contatoRouter);
 app.use('/enviar-email', contatoRouter);
+app.use('/desenvolvedor', desenvolvedorRouter);
 app.use('/tecnologias', tecnologiasRouter);
 app.use('/sobre', sobreRouter);
 

@@ -1,15 +1,13 @@
 {{> header}}
 
-
 <!DOCTYPE html>
 <html>
   <head>
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="/css/style.css">
   </head>
   <body>
-    <header>
-      <!-- Cabeçalho do site -->
-    </header>
+    
 
     <main>
       <h1>Bem-vindo à Página Inicial</h1>
@@ -19,13 +17,20 @@
           <li><a href="/">Página Inicial</a></li>
           <li><a href="/sobre">Sobre</a></li>
           <li><a href="/Tecnologias">Tecnologias</a></li>
-          <li><a href="/developer">Desenvolvedor</a></li>
+          <li><a href="/desenvolvedor">Desenvolvedor</a></li>
           <li><a href="/contato">Contato</a></li>
         </ul>
       </nav>
 
-      <form>
-        <!-- Formulário de login -->
+      <form class="formulario-contato">
+        <h2>Login</h2>
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="submit">Entrar</button>
       </form>
     </main>
 
