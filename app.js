@@ -40,6 +40,7 @@ const contatoRouter = require('./routes/contato');
 const tecnologiasRouter = require('./routes/tecnologias');
 const sobreRouter = require('./routes/sobre');
 const desenvolvedorRouter = require('./routes/desenvolvedor');
+const cadastroRouter = require('./routes/cadastro');
 
 // Configuração dos middlewares
 app.use(express.json());
@@ -59,6 +60,13 @@ app.use('/enviar-email', contatoRouter);
 app.use('/desenvolvedor', desenvolvedorRouter);
 app.use('/tecnologias', tecnologiasRouter);
 app.use('/sobre', sobreRouter);
+app.use('/cadastro', cadastroRouter);
+
+// Rota para o cadastro com sucesso
+app.get('/cadastro-sucesso', (req, res) => {
+  res.render('cadastroSucesso', { title: 'Cadastro realizado com sucesso' });
+});
+
 
 // Error handler
 app.use(function(err, req, res, next) {

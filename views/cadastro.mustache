@@ -1,0 +1,35 @@
+{{> header}}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    
+
+    <main class="main-content">
+      <h1>Crie sua conta</h1>
+      <p>Preencha as informações para criar sua conta</p>
+
+      <form class="formulario-contato" method="POST" action="/cadastro">
+        <h2>Nome de usuário</h2>
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="passwordConfirmacao">Confirme sua senha:</label>
+        <input type="password" id="passwordConfirmacao" name="passwordConfirmacao" required>
+        
+        <button type="submit">Criar conta</button>
+      </form>
+    </main>
+
+    <footer>
+      <!-- Rodapé do site -->
+    </footer>
+  </body>
+</html>
