@@ -2,33 +2,46 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    
 
-    <main class="main-content">
-      <h1>Bem-vindo à Página Inicial</h1>
-      <p>Esse é um projeto para a disciplina WEB2 onde foi desenvolvido um To-do List simples</p>
-      <p>O link para as páginas disponíveis já se encontra no cabeçalho.</p>
+<head>
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
 
-      <form class="formulario-contato">
-        <h2>Login</h2>
-        <label for="username">Usuário:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="password">Senha:</label>
-        <input type="password" id="password" name="password" required>
-        
-        <button type="submit">Entrar</button>
-        <p> <a href="/cadastro">Crie uma conta aqui</a></p>
-      </form>
-    </main>
+<script>
+  function redirectToUserPage() {
+    window.location.href = "/usuario/edit";
+  }
+</script>
 
-    <footer>
-      <!-- Rodapé do site -->
-    </footer>
-  </body>
+
+<body>
+
+
+  <main class="main-content">
+    <h1>Bem-vindo à Página Inicial</h1>
+    <p>Esse é um projeto para a disciplina WEB2 onde foi desenvolvido um To-do List simples</p>
+    <p>O link para as páginas disponíveis já se encontra no cabeçalho.</p>
+
+    <form id="loginForm" method="POST" action="/login" class="formulario-contato">
+      <h2>Login</h2>
+      <label for="username">Usuário:</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Digite sua senha:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Entrar</button>
+      <p> <a href="/cadastro">Crie uma conta aqui</a></p>
+    </form>
+
+  </main>
+
+ 
+  {{> footer}}
+  
+
+
+</body>
+
 </html>

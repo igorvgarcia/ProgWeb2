@@ -1,9 +1,11 @@
-// user.js
-
-const connection = require('./db.js');
+const connection = require('../db.js');
 
 class User {
-  // ...
+  constructor(id, username, password) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+  }
 
   static create(username, password, callback) {
     // Código para criar um novo usuário no banco de dados
@@ -45,3 +47,4 @@ class User {
 }
 
 module.exports = User;
+// Compare this snippet from routes\cadastro.js:

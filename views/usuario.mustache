@@ -1,0 +1,44 @@
+{{> header}}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <!-- Conteúdo do cabeçalho -->
+  </header>
+
+  <main class="main-content">
+    <h1>Bem-vindo, {{ username }}</h1>
+    <p>Aqui você pode editar sua senha ou excluir sua conta.</p>
+
+    <form id="changePasswordForm" method="POST" action="/change-password" class="formulario-contato">
+      <h2>Editar senha</h2>
+      <label for="currentPassword">Senha atual:</label>
+      <input type="password" id="currentPassword" name="currentPassword" required>
+      
+      <label for="newPassword">Nova senha:</label>
+      <input type="password" id="newPassword" name="newPassword" required>
+      
+      <button type="submit">Salvar</button>
+    </form>
+
+    <form id="deleteAccountForm" method="POST" action="/delete-account" class="formulario-contato">
+      <h2>Excluir conta</h2>
+      <p>Tem certeza de que deseja excluir sua conta? Essa ação não pode ser desfeita.</p>
+      
+      <label for="password">Digite sua senha:</label>
+      <input type="password" id="password" name="password" required>
+      
+      <button type="submit">Excluir conta</button>
+    </form>
+  </main>
+
+  <footer>
+    <!-- Rodapé do site -->
+  </footer>
+</body>
+</html>
