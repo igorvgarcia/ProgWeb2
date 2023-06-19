@@ -16,25 +16,27 @@
         <p>Aqui você pode editar sua senha ou excluir sua conta.</p>
 
         <section>
-            <h2>Editar sua senha</h>
-                <form id="changePasswordForm" method="POST" action="/change-password" class="formulario-contato">
+            <h2>Editar sua senha</h2>
+                <form id="changePasswordForm" method="POST" action="/editauser/change-password" class="formulario-contato">
                 
                     <label for="currentPassword">Senha atual:</label>
-                    <input type="password" id="currentPassword" name="currentPassword" required>
+                    <input type="password" id="currentPassword" name="currentPassword" >
         
                     <label for="newPassword">Nova senha:</label>
-                    <input type="password" id="newPassword" name="newPassword" required>
+                    <input type="password" id="newPassword" name="newPassword" >
         
                     <button type="submit">Salvar</button>
+                </form>
         </section>
 
             <section>
                 <h2>Excluir conta</h2>
-                <form id="deleteAccountForm" method="POST" action="/delete-account" class="formulario-contato">
-                    <p>Tem certeza de que deseja excluir sua conta? Essa ação não pode ser desfeita.</p>
+                <form id="deleteAccountForm" method="POST" action="/editauser/delete-account" class="formulario-contato">
+                    <p>Tem certeza de que deseja excluir sua conta? </p>
+                    <p>Essa ação não pode ser desfeita.</p>
         
                     <label for="password">Digite sua senha:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" >
         
                     <button type="submit">Excluir conta</button>
                 </form>

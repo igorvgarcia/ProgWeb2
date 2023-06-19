@@ -1,15 +1,12 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const authenticateToken = require('../authMiddleware');
+const User = require('../models/userModel');
 
 router.get('/', (req, res) => {
   // Lógica da rota index
   res.render('usuario', { title: 'Página Inicial' });
 });
-
 
 function verifyToken(req, res, next) {
   const token = req.cookies.token;
@@ -33,6 +30,8 @@ router.get('/edit', verifyToken, (req, res) => {
   // Aqui você pode implementar a lógica para a página do usuário
   // Você pode acessar o usuário autenticado através de req.user.username
   console.log(req.user.username);
+  console.log(req.user.id);
+  console.log(req.user);
   res.render('usuario', { title: 'editar usuario', username: req.user.username });
   console.log("passou");
 });

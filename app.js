@@ -6,8 +6,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-
-const authenticateToken = require('./authMiddleware');
+const verifyToken = require('./middlewares/authMiddleware');
 
 
 
@@ -47,9 +46,7 @@ const sobreRouter = require('./routes/sobre');
 const desenvolvedorRouter = require('./routes/desenvolvedor');
 const cadastroRouter = require('./routes/cadastro');
 const userRouter = require('./routes/user');
-
-
-
+const editaUserRouter = require('./routes/editaUser');
 
 // Configuração dos middlewares
 app.use(express.json());
@@ -83,32 +80,11 @@ app.use('/tecnologias', tecnologiasRouter);
 app.use('/sobre', sobreRouter);
 app.use('/cadastro', cadastroRouter);
 app.use('/login', indexRouter);
-app.use('/usuario', verifyToken, addTokenToRequest, userRouter);
+app.use('/usuario', addTokenToRequest, userRouter);
+app.use('/editauser', addTokenToRequest, editaUserRouter);
 
-// Middleware para verificar o token JWT
-function verifyToken(req, res, next) {
-  const token = req.cookies.token; //obtenha o token do cookie
-  
 
-  if (!token) {
-    // Se o token não estiver presente, retorne um status 401 (Unauthorized)
-    return res.status(401).json({ error: 'Token não fornecido' });
-  }
 
-  // Verifique se o token é válido
-  jwt.verify(token, 'seu_segredo', (error, decoded) => {
-    if (error) {
-      // Se o token for inválido, retorne um status 403 (Forbidden)
-      return res.status(403).json({ error: 'Token inválido' });
-    }
-
-    // O token é válido, armazene os dados do usuário decodificado no objeto de solicitação (req)
-    req.user = decoded;
-
-    // Continue para a próxima função de middleware
-    next();
-  });
-}
 
 // Aplicar o middleware de verificação de token JWT em rotas protegidas
 app.use('/rota_protegida', verifyToken);
