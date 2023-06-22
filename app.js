@@ -47,6 +47,10 @@ const desenvolvedorRouter = require('./routes/desenvolvedor');
 const cadastroRouter = require('./routes/cadastro');
 const userRouter = require('./routes/user');
 const editaUserRouter = require('./routes/editaUser');
+const paginaCardsRouter = require('./routes/paginaCards');
+
+//API
+const rotasAPI = require('./API/rotasAPI');
 
 // Configuração dos middlewares
 app.use(express.json());
@@ -82,6 +86,11 @@ app.use('/cadastro', cadastroRouter);
 app.use('/login', indexRouter);
 app.use('/usuario', addTokenToRequest, userRouter);
 app.use('/editauser', addTokenToRequest, editaUserRouter);
+app.use('/cards', paginaCardsRouter );
+
+//API
+app.use('/api', rotasAPI);
+
 
 
 

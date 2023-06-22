@@ -1,0 +1,94 @@
+{{> header}}
+<head>
+    <title>Tarefas</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+<main class="main-content">
+  <h1>Lista de Tarefas</h1>
+
+  <div class="todo-list card-row">
+    {{#todos}}
+    <div class="card card-column">
+      <div class="card-body">
+        <h2>{{descricao}}</h2>
+        {{#done}}
+        <p class="status">Feito</p>
+        {{/done}}
+        {{^done}}
+        <p class="status">Pendente</p>
+        {{/done}}
+        <button class="mark-done" onclick="markAsDone('{{id}}')">Marcar como Feito</button>
+      </div>
+    </div>
+    {{/todos}}
+  </div>
+</main>
+
+{{> footer}}
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Fazer a requisição para a API
+    fetch('/api/todos')
+      .then(response => response.json())
+      .then(data => {
+        // Manipular os dados recebidos e atualizar a página
+        renderTodos(data);
+      })
+      .catch(error => {
+        console.error('Erro ao obter os dados:', error);
+      });
+  });
+
+  function renderTodos(todos) {
+    // Obter o elemento da lista de tarefas
+    const todoList = document.querySelector('.todo-list');
+
+    // Limpar o conteúdo atual da lista
+    todoList.innerHTML = '';
+
+    // Iterar sobre cada tarefa e criar elementos HTML correspondentes
+    todos.forEach(todo => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const cardBody = document.createElement('div');
+      cardBody.className = 'card-body';
+
+      const heading = document.createElement('h2');
+      heading.textContent = todo.descricao;
+
+      const status = document.createElement('p');
+      status.className = 'status';
+      status.textContent = todo.done ? 'Feito' : 'Pendente';
+
+      const markDoneButton = document.createElement('button');
+      markDoneButton.className = 'mark-done';
+      markDoneButton.textContent = 'Marcar como Feito';
+      markDoneButton.addEventListener('click', () => markAsDone(todo.id));
+
+      cardBody.appendChild(heading);
+      cardBody.appendChild(status);
+      cardBody.appendChild(markDoneButton);
+
+      card.appendChild(cardBody);
+
+      todoList.appendChild(card);
+    });
+  }
+
+  function markAsDone(todoId) {
+    // Fazer a requisição para marcar a tarefa como concluída
+    fetch('/api/todos/${todoId}/done', { method: 'POST' })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Tarefa marcada como concluída:', data);
+        // Atualizar a página para refletir as alterações
+        location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao marcar a tarefa como concluída:', error);
+      });
+  }
+</script>
