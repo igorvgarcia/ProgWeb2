@@ -1,165 +1,252 @@
 {{> header}}
+
 <head>
-  <title>Tarefas</title>
-  <link rel="stylesheet" href="/css/style.css">
+    <title>Tarefas</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <main class="main-content">
-  <h1>Lista de Tarefas</h1>
-  <form id="createCardForm">
-    <input type="text" name="descricao" placeholder="Descrição" required>
-    <label>
-      <input type="checkbox" name="done"> Concluído
-    </label>
-    <button type="submit">Adicionar Card</button>
-  </form>
+    <h1>Lista de Tarefas</h1>
+    <form id="createCardForm">
+        <input type="text" name="descricao" placeholder="Descrição" required>
+        <label>
+            <input type="checkbox" name="done"> Concluído
+        </label>
+        <button type="submit">Adicionar Card</button>
+    </form>
 
-  <div class="todo-list card-row">
-    {{#todos}}
-    <div class="card card-column">
-      <div class="card-body">
-        <h2>{{descricao}}</h2>
-        {{#done}}
-        <p class="status">Feito</p>
-        {{/done}}
-        {{^done}}
-        <p class="status">Pendente</p>
-        {{/done}}
-        <button class="mark-done" onclick="markAsDone('{{id}}')">Marcar como Feito</button>
-        <button class="delete-card" onclick="deleteCard('{{id}}')">Excluir</button>
-
-
+    <div class="todo-list card-row">
+        {{#todos}}
+        <div class="card card-column">
+            <div class="card-body">
+                {{#editing}}
+                <form class="edit-form" onsubmit="editCard(event, '{{id}}')">
+                    <input type="text" name="descricao" value="{{descricao}}" required>
+                    <button type="submit">Salvar</button>
+                </form>
+                {{else}}
+                <h2>{{descricao}}</h2>
+                {{#done}}
+                <p class="status">Feito</p>
+                {{/done}}
+                {{^done}}
+                <p class="status">Pendente</p>
+                {{/done}}
+                <button class="mark-done" onclick="markAsDone('{{id}}')">Marcar como Feito</button>
+                <button class="delete-card" onclick="deleteCard('{{id}}')">Excluir</button>
+                <button class="edit-card" onclick="startEdit('{{id}}', this)">Editar</button>
+                {{/editing}}
+            </div>
+        </div>
+        {{/todos}}
     </div>
-    </div>
-    {{/todos}}
-  </div>
 </main>
 
 {{> footer}}
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Fazer a requisição para a API
-    fetch('/api/todos')
-      .then(response => response.json())
-      .then(data => {
-        // Manipular os dados recebidos e atualizar a página
-        renderTodos(data);
-      })
-      .catch(error => {
-        console.error('Erro ao obter os dados:', error);
-      });
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fazer a requisição para a API
+        fetch('/api/todos')
+            .then(response => response.json())
+            .then(data => {
+                // Manipular os dados recebidos e atualizar a página
+                renderTodos(data);
+            })
+            .catch(error => {
+                console.error('Erro ao obter os dados:', error);
+            });
 
-    // Adicionar o evento de escuta para o envio do formulário
-    const createCardForm = document.getElementById('createCardForm');
-    createCardForm.addEventListener('submit', event => {
-      event.preventDefault();
-      createCard();
+        // Adicionar o evento de escuta para o envio do formulário
+        const createCardForm = document.getElementById('createCardForm');
+        createCardForm.addEventListener('submit', event => {
+            event.preventDefault();
+            createCard();
+        });
     });
-  });
 
-  function renderTodos(todos) {
-    // Obter o elemento da lista de tarefas
-    const todoList = document.querySelector('.todo-list');
+    function renderTodos(todos) {
+        const todoList = document.querySelector('.todo-list');
 
-    // Limpar o conteúdo atual da lista
-    todoList.innerHTML = '';
+        // Limpar o conteúdo atual da lista
+        todoList.innerHTML = '';
 
-    // Iterar sobre cada tarefa e criar elementos HTML correspondentes
-    todos.forEach(todo => {
-      const card = document.createElement('div');
-      card.className = 'card';
+        todos.forEach(todo => {
+            const card = document.createElement('div');
+            card.className = 'card card-column';
 
-      const cardBody = document.createElement('div');
-      cardBody.className = 'card-body';
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
 
-      const heading = document.createElement('h2');
-      heading.textContent = todo.descricao;
+            if (todo.editing) {
+                const editForm = document.createElement('form');
+                editForm.className = 'edit-form';
+                editForm.addEventListener('submit', event => editCard(event, todo.id));
 
-      const status = document.createElement('p');
-      status.className = 'status';
-      status.textContent = todo.done ? 'Feito' : 'Pendente';
+                const editInput = document.createElement('input');
+                editInput.type = 'text';
+                editInput.name = 'descricao';
+                editInput.value = todo.descricao;
+                editInput.required = true;
 
-      const markDoneButton = document.createElement('button');
-      markDoneButton.className = 'mark-done';
-      markDoneButton.textContent = 'Marcar como Feito';
-      markDoneButton.addEventListener('click', () => markAsDone(todo.id));
+                const saveButton = document.createElement('button');
+                saveButton.type = 'submit';
+                saveButton.textContent = 'Salvar';
 
-      const deleteButton = document.createElement('button');
-    deleteButton.className = 'delete-card';
-    deleteButton.textContent = 'Excluir';
-    deleteButton.addEventListener('click', () => deleteCard(todo.id));
+                editForm.appendChild(editInput);
+                editForm.appendChild(saveButton);
+                cardBody.appendChild(editForm);
+            } else {
+                const heading = document.createElement('h2');
+                heading.textContent = todo.descricao;
 
-      cardBody.appendChild(heading);
-      cardBody.appendChild(status);
-      cardBody.appendChild(markDoneButton);
-      cardBody.appendChild(deleteButton);
+                const status = document.createElement('p');
+                status.className = 'status';
+                status.textContent = todo.done ? 'Feito' : 'Pendente';
 
+                const markDoneButton = document.createElement('button');
+                markDoneButton.className = 'mark-done';
+                markDoneButton.textContent = 'Marcar como Feito';
+                markDoneButton.addEventListener('click', () => markAsDone(todo.id));
 
-      card.appendChild(cardBody);
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-card';
+                deleteButton.textContent = 'Excluir';
+                deleteButton.addEventListener('click', () => deleteCard(todo.id));
 
-      todoList.appendChild(card);
-    });
-  }
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-card';
+                editButton.textContent = 'Editar';
+                editButton.addEventListener('click', event => startEdit(todo.id, event.target));
 
-  function createCard() {
-  const form = document.getElementById('createCardForm');
-  const formData = new FormData(form);
+                cardBody.appendChild(heading);
+                cardBody.appendChild(status);
+                cardBody.appendChild(markDoneButton);
+                cardBody.appendChild(deleteButton);
+                cardBody.appendChild(editButton);
+            }
 
-  const done = formData.get('done') === 'on' ? true : false; // Converter para booleano
-
-  // Construir o objeto card com os dados do formulário
-  const card = {
-    descricao: formData.get('descricao'),
-    done: done
-  };
-
-  // Fazer a requisição POST para a rota de criação de cards
-  fetch('/api/todos', {
-    method: 'POST',
-    body: JSON.stringify(card),
-    headers: {
-      'Content-Type': 'application/json'
+            card.appendChild(cardBody);
+            todoList.appendChild(card);
+        });
     }
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Card criado:', data);
-      // Atualizar a página para refletir as alterações
-      location.reload();
-    })
-    .catch(error => {
-      console.error('Erro ao criar o card:', error);
-    });
+
+    function createCard() {
+        const form = document.getElementById('createCardForm');
+        const formData = new FormData(form);
+
+        const done = formData.get('done') === 'on' ? true : false; // Converter para booleano
+
+        // Construir o objeto card com os dados do formulário
+        const card = {
+            descricao: formData.get('descricao'),
+            done: done
+        };
+
+        // Fazer a requisição POST para a rota de criação de cards
+        fetch('/api/todos', {
+            method: 'POST',
+            body: JSON.stringify(card),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Card criado:', data);
+                // Atualizar a página para refletir as alterações
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Erro ao criar o card:', error);
+            });
+    }
+
+    function markAsDone(todoId) {
+        // Fazer a requisição para marcar a tarefa como concluída
+        fetch(`/api/todos/${todoId}/done`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Tarefa marcada como concluída:', data);
+                // Atualizar a página para refletir as alterações
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Erro ao marcar a tarefa como concluída:', error);
+            });
+    }
+
+    function deleteCard(cardId) {
+        // Fazer a requisição DELETE para a rota de exclusão do card
+        fetch(`/api/todos/${cardId}`, { method: 'DELETE' })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Card deletado com sucesso');
+                    location.reload(); // Atualizar a página para refletir as alterações
+                } else {
+                    console.error('Erro ao deletar o card:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao deletar o card:', error);
+            });
+    }
+
+    function editCard(event, cardId) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+
+        const editedCard = {
+            descricao: formData.get('descricao')
+        };
+
+        // Fazer a requisição PUT para a rota de atualização do card
+        fetch(`/api/todos/${cardId}`, {
+            method: 'PUT',
+            body: JSON.stringify(editedCard),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Card atualizado:', data);
+                // Atualizar a página para refletir as alterações
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar o card:', error);
+            });
+    }
+
+    function startEdit(cardId, button) {
+    const cardDiv = button.closest('.card');
+
+    if (cardDiv) {
+        const cardBody = cardDiv.querySelector('.card-body');
+        const cardHeading = cardBody.querySelector('h2');
+
+        const editForm = document.createElement('form');
+        editForm.className = 'edit-form';
+        editForm.addEventListener('submit', event => editCard(event, cardId));
+
+        const editInput = document.createElement('input');
+        editInput.type = 'text';
+        editInput.name = 'descricao';
+        editInput.value = cardHeading.textContent;
+        editInput.required = true;
+
+        const saveButton = document.createElement('button');
+        saveButton.type = 'submit';
+        saveButton.textContent = 'Salvar';
+
+        editForm.appendChild(editInput);
+        editForm.appendChild(saveButton);
+        cardBody.replaceChild(editForm, cardHeading);
+    } else {
+        console.error('Elemento pai do botão "Editar" não encontrado.');
+    }
 }
 
-
-  function markAsDone(todoId) {
-    // Fazer a requisição para marcar a tarefa como concluída
-    fetch(`/api/todos/${todoId}/done`, { method: 'POST' })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Tarefa marcada como concluída:', data);
-        // Atualizar a página para refletir as alterações
-        location.reload();
-      })
-      .catch(error => {
-        console.error('Erro ao marcar a tarefa como concluída:', error);
-      });
-  }
-
-  function deleteCard(cardId) {
-    // Fazer a requisição DELETE para a rota de exclusão do card
-    fetch(`/api/todos/${cardId}`, { method: 'DELETE' })
-      .then(response => {
-        if (response.ok) {
-          console.log('Card deletado com sucesso');
-          location.reload(); // Atualizar a página para refletir as alterações
-        } else {
-          console.error('Erro ao deletar o card:', response.statusText);
-        }
-      })
-      .catch(error => {
-        console.error('Erro ao deletar o card:', error);
-      });
-  }
 </script>

@@ -17,6 +17,9 @@
                     <li><a href="/contato">Contato</a></li>
                     <li><a href="/desenvolvedor">Desenvolvedor</a></li>
                     <li><a href="/sobre">Sobre</a></li>
+                    {{#isLoggedIn}}
+                        <li><a href="/logout">Logout</a></li>
+                    {{/isLoggedIn}} 
                 </ul>
             </nav>
         </div>

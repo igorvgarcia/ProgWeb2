@@ -27,6 +27,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Middleware para verificar se o usuário está logado
+const checkLoggedIn = (req, res, next) => {
+  // Verificar se o usuário está logado (exemplo: verificar se o token existe no cookie)
+  const isLoggedIn = req.cookies.token ? true : false;
+
+  // Definir a variável isLoggedIn em res.locals para estar disponível em todos os templates
+  res.locals.isLoggedIn = isLoggedIn;
+
+  // Chamar o próximo middleware ou manipulador de rota
+  next();
+};
+
 
 // Middleware para processar dados JSON
 app.use(express.json());
@@ -58,6 +70,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'imgs')));
+app.use(checkLoggedIn);
 
 // Middleware para adicionar o token de autenticação ao cabeçalho da requisição
 function addTokenToRequest(req, res, next) {

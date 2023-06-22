@@ -11,7 +11,9 @@ router.use(cookieParser());
 
 router.get('/', (req, res) => {
   // Lógica da rota index
-  res.render('index', { title: 'Página Inicial' });
+
+
+  res.render('index', { title: 'Página Inicial'});
 });
 
 router.post('/login', (req, res) => {
@@ -44,6 +46,11 @@ router.post('/login', (req, res) => {
       console.error('Erro ao buscar o usuário no banco de dados:', error);
       res.status(500).json({ error: 'Erro no servidor' });
     });
+});
+
+router.get('/logout', (req, res) => {
+  res.clearCookie('token'); // Limpa o cookie com o token
+  res.redirect('/'); // Redireciona para a página inicial
 });
 
 

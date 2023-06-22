@@ -95,6 +95,31 @@ router.delete('/todos/:id', (req, res) => {
         res.status(500).json({ error: 'Erro ao deletar o card' });
       });
   });
+
+  // Rota PUT para alterar a descrição de um card
+router.put('/todos/:id', async (req, res) => {
+    const cardId = req.params.id;
+    const { descricao } = req.body;
+  
+    try {
+      // Procurar o card pelo ID
+      const card = await Card.findByPk(cardId);
+  
+      if (!card) {
+        return res.status(404).json({ error: 'Card não encontrado' });
+      }
+  
+      // Atualizar a descrição do card
+      card.descricao = descricao;
+      await card.save();
+  
+      res.json(card);
+    } catch (error) {
+      console.error('Erro ao alterar a descrição do card:', error);
+      res.status(500).json({ error: 'Erro ao alterar a descrição do card' });
+    }
+  });
+  
   
   
 
