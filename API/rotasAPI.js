@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+const Card = require('../models/cardsModel');
+
+const verifyToken = require('../middlewares/authMiddleware');
+
 // Simulando dados de tarefas
 let todos = [
   { id: 1, descricao: 'Tarefa 1', done: true },
@@ -12,27 +16,86 @@ let todos = [
 ];
 
 // Rota GET para obter todas as tarefas
-router.get('/todos', (req, res) => {
-    console.log(todos);
-    res.json(todos);
+router.get('/todos', verifyToken, async (req, res) => {
+    const username = req.user.username;
+
+     // Consultar apenas os cards do usuário logado
+  Card.findAll({
+    where: { usuario: username }
+  })
+    .then(cards => {
+      res.json(cards);
+    })
+    .catch(error => {
+      console.error('Erro ao obter os cards:', error);
+      res.status(500).json({ error: 'Erro ao obter os cards' });
+    });
   });
   
 
 // Rota POST para marcar uma tarefa como concluída
-router.post('/todos/:id/done', (req, res) => {
-  const id = parseInt(req.params.id);
+router.post('/todos/:id/done', async (req, res) => {
+    const id = parseInt(req.params.id);
+  
+    try {
+      const card = await Card.findByPk(id);
+      
+      if (!card) {
+        return res.status(404).json({ error: 'Tarefa não encontrada' });
+      }
+  
+      // Marcar o card como concluído
+      card.done = true;
+      await card.save();
+  
+      res.json({ message: 'Tarefa marcada como concluída' });
+    } catch (error) {
+      console.error('Erro ao marcar a tarefa como concluída:', error);
+      res.status(500).json({ error: 'Erro ao marcar a tarefa como concluída' });
+    }
+  });
 
-  // Encontrar a tarefa pelo ID
-  const todo = todos.find(todo => todo.id === id);
+  // Rota POST para criar um novo card
+router.post('/todos', verifyToken, async (req, res) => {
+    console.log(req.body);
+    console.log(req.user);
+    const username = req.user.username;
 
-  if (!todo) {
-    return res.status(404).json({ error: 'Tarefa não encontrada' });
-  }
 
-  // Marcar a tarefa como concluída
-  todo.done = true;
+    try {
+      const { descricao, done } = req.body;
+  
+      // Cria o novo card no banco de dados
+      const newCard = await Card.create({
+        descricao,
+        done,
+        usuario: username
+      });
+  
+      res.status(201).json(newCard);
+    } catch (error) {
+      console.error('Erro ao criar o card:', error);
+      res.status(500).json({ error: 'Erro ao criar o card' });
+    }
+  });
 
-  res.json({ message: 'Tarefa marcada como concluída' });
-});
+  // Deletar um card específico
+router.delete('/todos/:id', (req, res) => {
+    const cardId = req.params.id;
+  
+    // Procurar o card pelo ID e remover do banco de dados
+    Card.destroy({
+      where: { id: cardId }
+    })
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch(error => {
+        console.error('Erro ao deletar o card:', error);
+        res.status(500).json({ error: 'Erro ao deletar o card' });
+      });
+  });
+  
+  
 
 module.exports = router;
